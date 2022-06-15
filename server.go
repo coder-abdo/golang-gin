@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/coder-abdo/gin-tutorial/controller"
 	"github.com/coder-abdo/gin-tutorial/middlewares"
 	"github.com/coder-abdo/gin-tutorial/service"
@@ -19,7 +21,13 @@ func main() {
 		ctx.JSON(200, VideoController.FindAll())
 	})
 	server.POST("/videos", func(ctx *gin.Context) {
-		ctx.JSON(200, VideoController.Save(ctx))
+		err := VideoController.Save(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			ctx.JSON(http.StatusOK, gin.H{"message": "video is saved successfully"})
+
+		}
 	})
 	server.Run(":8080")
 }
